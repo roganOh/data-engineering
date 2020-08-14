@@ -10,8 +10,8 @@ import psycopg2
 
 def get_Redshift_connection():
     host = "grepp-data.cduaw970ssvt.ap-northeast-2.redshift.amazonaws.com"
-    redshift_user = "admin"
-    redshift_pass = "GreppRocks1!"
+    redshift_user = ""
+    redshift_pass = ""
     port = 5439
     dbname = "dev"
     conn = psycopg2.connect("dbname={dbname} user={user} host={host} password={password} port={port}".format(
@@ -23,38 +23,6 @@ def get_Redshift_connection():
     ))
     conn.set_session(autocommit=True)
     return conn.cursor()
-
-
-def extract(url):
-    logging.info("Extract started")
-    f = requests.get(url)
-    logging.info("Extract done")
-    return (f.text)
-
-
-def transform(text):
-    logging.info("transform started")
-    # ignore the first line - header
-    lines = text.split("\n")[1:]
-    logging.info("transform done")
-    return lines
-
-
-def load(lines):
-    logging.info("load started")
-    cur = get_Redshift_connection()
-    sql = "BEGIN;TRUNCATE TABLE raw_data.name_gender;"
-    for l in lines:
-        if l != '':
-            (name, gender) = l.split(",")
-            sql += "INSERT INTO raw_data.name_gender VALUES ('{name}', '{gender}');"
-    sql += "END;"
-    logging.info(sql)
-    """
-    Do we want to enclose try/catch here
-    """
-    cur.execute(sql)
-    logging.info("load done")
 
 
 def extract(**context):
@@ -74,11 +42,14 @@ def transform(**context):
 
 
 def load(**context):
+    schema = context["params"]["schema"]
+    table = context["params"]["table"]
+    
     cur = get_Redshift_connection()
     lines = context["task_instance"].xcom_pull(key="return_value", task_ids="transform")
     lines = iter(lines)
-    next(lines) # header 건너뛰기
-    sql = "TRUNCATE TABLE ysjune1051.name_gender;"
+    next(lines)
+    sql = "BEGIN; TRUNCATE TABLE {schema}.{table};"
     for line in lines:
         if line != "":
             (name, gender) = line.split(",")
@@ -122,6 +93,8 @@ load = PythonOperator(
     task_id = 'load',
     python_callable = load,
     params = {
+        'schema': 'raw_data',
+        'table': 'name_gender'
     },
     provide_context=True,
     dag = dag_second_assignment)
