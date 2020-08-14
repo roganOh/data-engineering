@@ -9,41 +9,10 @@ import requests
 import logging
 import psycopg2
 
+
 def get_Redshift_connection():
     hook = PostgresHook(postgres_conn_id='redshift_dev_db')
     return hook.get_conn().cursor()
-
-
-def extract(url):
-    logging.info("Extract started")
-    f = requests.get(url)
-    logging.info("Extract done")
-    return (f.text)
-
-
-def transform(text):
-    logging.info("transform started")
-    # ignore the first line - header
-    lines = text.split("\n")[1:]
-    logging.info("transform done")
-    return lines
-
-
-def load(lines):
-    logging.info("load started")
-    cur = get_Redshift_connection()
-    sql = "BEGIN;TRUNCATE TABLE raw_data.name_gender;"
-    for l in lines:
-        if l != '':
-            (name, gender) = l.split(",")
-            sql += "INSERT INTO raw_data.name_gender VALUES ('{name}', '{gender}');"
-    sql += "END;"
-    logging.info(sql)
-    """
-    Do we want to enclose try/catch here
-    """
-    cur.execute(sql)
-    logging.info("load done")
 
 
 def extract(**context):
@@ -63,11 +32,14 @@ def transform(**context):
 
 
 def load(**context):
+    schema = context["params"]["schema"]
+    table = context["params"]["table"]
+    
     cur = get_Redshift_connection()
     lines = context["task_instance"].xcom_pull(key="return_value", task_ids="transform")
     lines = iter(lines)
-    next(lines) # header 건너뛰기
-    sql = "TRUNCATE TABLE ysjune1051.name_gender;"
+    next(lines)
+    sql = "BEGIN; TRUNCATE TABLE {schema}.{table};"
     for line in lines:
         if line != "":
             (name, gender) = line.split(",")
@@ -79,11 +51,10 @@ def load(**context):
 
 
 dag_second_assignment = DAG(
-    dag_id = 'second_assignment_v4',
+    dag_id = 'second_assignment_v3',
     start_date = datetime(2020,8,10), # 날짜가 미래인 경우 실행이 안됨
     schedule_interval = '0 2 * * *',  # 적당히 조절
     max_active_runs = 1,
-    catchup = False,
     default_args = {
         'retries': 1,
         'retry_delay': timedelta(minutes=3),
@@ -112,6 +83,8 @@ load = PythonOperator(
     task_id = 'load',
     python_callable = load,
     params = {
+        'schema': 'raw_data',
+        'table': 'name_gender'
     },
     provide_context=True,
     dag = dag_second_assignment)
