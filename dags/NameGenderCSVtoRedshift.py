@@ -40,7 +40,7 @@ def transform(text):
 def load(lines):
     logging.info("load started")
     cur = get_Redshift_connection()
-    sql = "BEGIN;TRUNCATE TABLE raw_data.name_gender;"
+    sql = "BEGIN;DELETE FROM TABLE raw_data.name_gender;"
     for l in lines:
         if l != '':
             (name, gender) = l.split(",")
