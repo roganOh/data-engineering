@@ -10,7 +10,8 @@ dag_second_assignment = DAG(
 
 
 def etl():
-	 # 여기에 코드를 기록
+	# 여기에 코드를 기록
+	pass
    
 
 
