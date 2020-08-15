@@ -45,6 +45,7 @@ def load(lines):
         if l != '':
             (name, gender) = l.split(",")
             sql += "INSERT INTO raw_data.name_gender VALUES ('{name}', '{gender}');"
+    sql += "COMMIT;"
     cur.execute(sql)
     logging.info(sql)
     logging.info("load done")
