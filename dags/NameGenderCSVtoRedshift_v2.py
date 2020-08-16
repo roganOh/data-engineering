@@ -11,8 +11,8 @@ import psycopg2
 
 def get_Redshift_connection():
     host = "grepp-data.cduaw970ssvt.ap-northeast-2.redshift.amazonaws.com"
-    redshift_user = ""
-    redshift_pass = ""
+    redshift_user = ""  # 본인 ID 사용
+    redshift_pass = ""  # 본인 Password 사용
     port = 5439
     dbname = "dev"
     conn = psycopg2.connect("dbname={dbname} user={user} host={host} password={password} port={port}".format(
@@ -44,7 +44,7 @@ def transform(text):
 def load(lines):
     logging.info("load started")
     cur = get_Redshift_connection()
-    sql = "BEGIN;TRUNCATE TABLE raw_data.name_gender;"
+    sql = "BEGIN;DELETE FROM TABLE raw_data.name_gender;"
     for l in lines:
         if l != '':
             (name, gender) = l.split(",")
