@@ -88,6 +88,12 @@ sql_alchemy_conn = postgresql+psycopg2://ID:PASSWORD@HOST:5432/DATABASE
 load_examples = False
 ```
 
+#### Reinitialize Airflow DB
+
+```
+AIRFLOW_HOME=/var/lib/airflow airflow initdb
+```
+
 
 ## Start Airflow Webserver and Scheduler
 
