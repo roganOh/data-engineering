@@ -2,14 +2,14 @@ These instructions are about installing Airflow on a Ubuntu server (not using Do
 
 ## Airflow Python Module Installation
 
-First upgrade apt and install python3 pip
+#### First upgrade apt and install python3 pip
 
 ```
 sudo apt-get update
 sudo apt-get install -y python3-pip
 ```
 
-Next install Airflow and other Python modules we need
+#### Next install Airflow and other Python modules we need
 
 ```
 sudo pip3 install apache-airflow['postgres'] cryptography psycopg2-binary boto3 botocore
@@ -30,13 +30,13 @@ We don't need this section for the lab session since you will be given pre-creat
 
 By default, Airflow will be launced with a SQLite database which is a single thread. Will change this to use a more performant database such as Postgres later.
 
-### Install Postgres server
+#### Install Postgres server
 
 ```
 sudo apt-get install -y postgresql postgresql-contrib
 ```
 
-### Next create a user and a database to be used by Airflow to store its data
+#### Next create a user and a database to be used by Airflow to store its data
 ```
 $ sudo su postgres
 $ psql
@@ -51,7 +51,7 @@ postgres=# \q
 $ exit
 ```
 
-### Restart Postgres
+#### Restart Postgres
 
 ```
 sudo service postgresql restart
@@ -60,7 +60,7 @@ sudo service postgresql restart
 
 ## Initial Airflow Initialization
 
-### First install Airflow with the default configuration and will change some configuration
+#### First install Airflow with the default configuration and will change some configuration
 
 ```
 sudo su airflow
@@ -71,11 +71,11 @@ $ ls /var/lib/airflow
 airflow.cfg  airflow.db  logs  unittests.cfg
 ```
 
-### Now edit /var/lib/airflow/airflow.cfg to do the following 3 things:
+#### Now edit /var/lib/airflow/airflow.cfg to do the following 3 things:
 
  * change the "executor" to LocalExecutor from SequentialExecutor
  * change the db connection string ("sql_alchemy_conn") to point to the local Postgres installed above
-   * Here you need to use the ID, PASSWORD and DATABASE assigned to you
+   * Here you need to use the ID, HOST, PASSWORD and DATABASE assigned to you
  * change Loadexample setting to False
  
 ```
@@ -83,7 +83,7 @@ airflow.cfg  airflow.db  logs  unittests.cfg
 ...
 executor = LocalExecutor
 ...
-sql_alchemy_conn = postgresql+psycopg2://ID:PASSWORD@localhost:5432/DATABASE
+sql_alchemy_conn = postgresql+psycopg2://ID:PASSWORD@HOST:5432/DATABASE
 ...
 load_examples = False
 ```
@@ -94,7 +94,7 @@ load_examples = False
 To start up airflow scheduler and webserver as background services, follow the instructions here. Do this as ubuntu account (not airflow). If you get "[sudo] password for airflow: " error, you are still using airflow as your account. Exit so that you can use "ubuntu" account.
 
 
-### Create two files:
+#### Create two files:
 
 sudo vi /etc/systemd/system/airflow-webserver.service
 
@@ -136,7 +136,7 @@ RestartSec=10s
 WantedBy=multi-user.target
 ```
 
-### Run them as startup scripts. 
+#### Run them as startup scripts. 
 
 ```
 sudo systemctl daemon-reload
@@ -171,6 +171,3 @@ cp -r data-engineering/dags/* dags
 ```
 
 Visit your Airflow Web UI and we should see the DAGs from the repo. Some will have errors displayed and you need to add some variables and connections according to the slides 23 to 25 and 30 of "Airflow Deep-dive" preso.
-
-
-
