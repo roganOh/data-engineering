@@ -187,3 +187,7 @@ my_first_dag
 
  - "airflow list_tasks DAG이름"을 실행하면 DAG에 속한 태스크들의 이름이 모두 나열된다. 
  - 특정 태스트를 실행하고 싶다면 예를 들어 task ID가 print_hello라면 "airflow test DAG이름 print_hello 2020-08-09" 이렇게 실행하면 된다. 여기서 주의할 점은 2020-08-09의 경우 DAG의 start_date보다는 뒤어야 하지만 현재 시간보다 미래이면 안된다.
+ 
+#### Docker Container의 내용을 저장하기
+
+https://stackoverflow.com/questions/44480740/how-to-save-a-docker-container-state
