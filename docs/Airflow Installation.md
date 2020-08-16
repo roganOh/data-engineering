@@ -97,7 +97,7 @@ AIRFLOW_HOME=/var/lib/airflow airflow initdb
 
 ## Start Airflow Webserver and Scheduler
 
-To start up airflow scheduler and webserver as background services, follow the instructions here. Do this as ubuntu account (not airflow). If you get "[sudo] password for airflow: " error, you are still using airflow as your account. Exit so that you can use "ubuntu" account.
+To start up airflow scheduler and webserver as background services, follow the instructions here. Do this as <b>ubuntu</b> account (<b>not airflow</b>). If you get "[sudo] password for airflow: " error, you are still using airflow as your account. Exit so that you can use "ubuntu" account.
 
 
 #### Create two files:
