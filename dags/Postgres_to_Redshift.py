@@ -23,7 +23,7 @@ tables = [
 
 # s3_bucket, local_dir
 s3_bucket = 'grepp-data-engineering'
-local_dir = ''             # 실제 프로덕션에서는 공간이 충분한 폴더 (volume)로 맞춰준다
+local_dir = './'           # 실제 프로덕션에서는 공간이 충분한 폴더 (volume)로 맞춰준다
 s3_key_prefix = 'keeyong'  # 본인의 ID에 맞게 수정
 schema = 'raw_data'        # 본인이 사용하는 스키마에 맞게 수정
 prev_task = None
