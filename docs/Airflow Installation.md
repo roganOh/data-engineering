@@ -68,7 +68,7 @@ $ cd ~/
 $ mkdir dags
 $ AIRFLOW_HOME=/var/lib/airflow airflow initdb
 $ ls /var/lib/airflow
-airflow.cfg  airflow.db  logs  unittests.cfg
+airflow.cfg  airflow.db  dags   logs  unittests.cfg
 ```
 
 #### Now edit /var/lib/airflow/airflow.cfg to do the following 3 things:
