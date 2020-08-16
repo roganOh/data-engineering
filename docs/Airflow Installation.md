@@ -1,4 +1,4 @@
-We will be using Python 3. Python 2 is sunsetting
+These instructions are about installing Airflow on a Ubuntu server (not using Docker). We will be using Python 3. Python 2 is sunsetting
 
 ## Airflow Python Module Installation
 
