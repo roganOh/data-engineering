@@ -185,7 +185,7 @@ Visit your Airflow Web UI and we should see the DAGs from the repo. Some will ha
 First install flask_bcrypt & werkzeug as airflow user:
 ```
 pip3 install flask_bcrypt
-pip3 install werkzeug
+pip3 install -U Werkzeug==0.16.0
 ```
 
 
