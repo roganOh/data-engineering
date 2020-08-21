@@ -167,7 +167,7 @@ sudo systemctl status airflow-scheduler
 
 ## Dag Installation from this repo:
 
-The last step is to copy the files under keeyong/data-engineering repo's dags folder to /var/lib/airflow/dags
+The last step is to copy the files under keeyong/data-engineering repo's dags folder to /var/lib/airflow/dags. Don't forget to add "-r" option in the "cp" command:
 
 ```
 sudo su airflow
@@ -177,3 +177,64 @@ cp -r data-engineering/dags/* dags
 ```
 
 Visit your Airflow Web UI and we should see the DAGs from the repo. Some will have errors displayed and you need to add some variables and connections according to the slides 23 to 25 and 30 of "Airflow Deep-dive" preso.
+
+
+## Add authentication to Airflow Webserver
+
+
+First install flask_bcrypt & werkzeug as airflow user:
+```
+pip3 install flask_bcrypt
+pip3 install werkzeug
+```
+
+
+Before:
+
+```
+[webserver]
+...
+# Set to true to turn on authentication:
+# https://airflow.apache.org/security.html#web-authentication
+authenticate = False
+```
+
+After:
+
+```
+[webserver]
+...
+authenticate = True
+auth_backend = airflow.contrib.auth.backends.password_auth
+```
+
+Now time to create a user for Airflow login. Copy and paste the following code as /var/lib/airflow/createUser.py as airflow user:
+
+```
+import airflow
+from airflow import models, settings
+from airflow.contrib.auth.backends.password_auth import PasswordUser
+
+user = PasswordUser(models.User())
+user.username = 'datainfra'
+user.email = 'keeyonghan@hotmail.com'
+user.password = 'KeeyongHan'
+user.superuser = True
+session = settings.Session()
+session.add(user)
+session.commit()
+session.close()
+exit()
+```
+
+Run createUser.py:
+```
+AIRFLOW_HOME=/var/lib/airflow python3 createUser.py
+```
+
+Last but not least restart the webserver as ubuntu user:
+```
+sudo systemctl restart airflow-webserver
+```
+
+
