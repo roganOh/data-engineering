@@ -39,7 +39,7 @@ def load(**context):
     lines = context["task_instance"].xcom_pull(key="return_value", task_ids="transform")
     lines = iter(lines)
     next(lines)
-    sql = "BEGIN; TRUNCATE TABLE {schema}.{table};"
+    sql = "BEGIN; TRUNCATE TABLE {schema}.{table};".format(schema=schema, table=table)
     for line in lines:
         if line != "":
             (name, gender) = line.split(",")
