@@ -24,6 +24,13 @@ sudo groupadd airflow
 sudo useradd airflow -g airflow -d /var/lib/airflow -m
 ```
 
+To change the user to airflow, run the following. Running "bash" will make your life easier:
+```
+sudo su airflow
+bash
+```
+
+
 ## (Optional) Local Postgres Installation to store Airflow related info (DAGs, Tasks, Variables, Connections and so on)
 
 We don't need this section for the lab session since you will be given pre-created account but if you need to set up a Postgres DB locally, here is what you need.
