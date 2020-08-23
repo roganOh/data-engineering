@@ -25,7 +25,7 @@ flask fab create-admin
 ```
 superset db upgrade
 superset init
-
+```
 
 Create a PostgreSQL user/password and a DB. We will use an external Postgres instance for this
 
