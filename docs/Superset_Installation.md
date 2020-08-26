@@ -1,20 +1,26 @@
 # Superset Installation Instructions (in Ubuntu)
 
+
+## Python Related Upgrade
+
 ```
 sudo apt update
 sudo apt install -y build-essential autoconf libtool python3-dev libssl-dev libsasl2-dev libldap2-dev 
 sudo apt install -y virtualenv
 virtualenv -p python3 superset
 source superset/bin/activate
-pip3 install image cryptography
-pip3 install apache-superset
+pip3 install image cryptography apache-superset
 ```
+
+## superset User (in Ubuntu) Creation
 
 Create a user and group for superset and a home directory
 ```
-groupadd superset
-useradd superset -g superset -d /var/lib/superset -m
+sudo groupadd superset
+sudo useradd superset -g superset -d /var/lib/superset -m
 ```
+
+## Superset Login Account Creation
 
 Create a login account for Superset (don't forget to note the credentials somewhere)
 ```
@@ -22,13 +28,45 @@ export FLASK_APP=superset
 flask fab create-admin
 ```
 
+## Initialize Superset
+
 ```
 superset db upgrade
 superset init
 ```
 
-Create a PostgreSQL user/password and a DB. We will use an external Postgres instance for this
+## Postgres Installation
 
+### Install Postgres Server
+
+Create a PostgreSQL user/password and a DB. We will use an external Postgres instance for this
+```
+sudo apt-get install -y postgresql postgresql-contrib
+```
+
+### Next create a user and a database to be used by Airflow to store its data
+
+```
+$ sudo su postgres
+$ psql
+psql (10.12 (Ubuntu 10.12-0ubuntu0.18.04.1))
+Type "help" for help.
+
+postgres=# CREATE USER airflow PASSWORD 'airflow';
+CREATE ROLE
+postgres=# CREATE DATABASE airflow;
+CREATE DATABASE
+postgres=# \q
+$ exit
+```
+
+### Restart Postgres
+
+```
+sudo service postgresql restart
+```
+
+## Create a superset config
 
 Create a superset config. Don't forget to change ID, PW and DATABASE according to your Postgres credentials
 ```
