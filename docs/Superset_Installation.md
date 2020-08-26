@@ -52,15 +52,15 @@ $ psql
 psql (10.12 (Ubuntu 10.12-0ubuntu0.18.04.1))
 Type "help" for help.
 
-postgres=# CREATE USER airflow PASSWORD 'airflow';
+postgres=# CREATE USER superset PASSWORD 'superset';
 CREATE ROLE
-postgres=# CREATE DATABASE airflow;
+postgres=# CREATE DATABASE superset;
 CREATE DATABASE
 postgres=# \q
 $ exit
 ```
 
-### Restart Postgres
+### Restart Postgres (as ubuntu user)
 
 ```
 sudo service postgresql restart
@@ -73,22 +73,25 @@ Create a superset config. Don't forget to change ID, PW and DATABASE according t
 $ sudo su - superset
 $ cd /var/lib/superset
 $ mkdir conf
-$ cat > conf/envs
+$ vi conf/envs
+```
 PYTHONPATH=/var/lib/superset/conf
-<ctrl + d>
+```
 
-$ cat > conf/superset_config
+$ vi conf/superset_config
+```
 SUPERSET_WEBSERVER_PORT = 8088
 SQLALCHEMY_DATABASE_URI = 'postgresql://ID:PW@127.0.0.1/DATABASE'
-<ctrl + d>
+```
+
 $ echo "export PYTHONPATH=$HOME/conf" >> ~/.bashrc
 $ . ~/.bashrc
 ```
 
 Create startup scripts
 ```
-$ sudo -i
-# cat > /etc/systemd/system/superset-server.service
+$ sudo vi /etc/systemd/system/superset-server.service
+```
 [Unit]
 Description=Superset server
 After=network.target postgresql.service
@@ -105,14 +108,13 @@ RestartSec=10s
 
 [Install]
 WantedBy=multi-user.target
-<ctrl + d>
 ```
 
 Run the server
 ```
-# systemctl daemon-reload
-# systemctl start superset-server
-# systemctl status superset-server
+$ sudo systemctl daemon-reload
+$ sudo systemctl start superset-server
+$ sudo systemctl status superset-server
 
 ● superset-server.service - Superset server
    Loaded: loaded (/etc/systemd/system/superset-server.service; disabled; vendor preset: enabled)
