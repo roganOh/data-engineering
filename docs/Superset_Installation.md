@@ -22,13 +22,6 @@ export FLASK_APP=superset
 flask fab create-admin
 ```
 
-## Initialize Superset
-
-```
-PYTHONPATH=/home/ubuntu/conf superset db upgrade
-superset init
-```
-
 ## Postgres Installation
 
 ### Install Postgres Server
@@ -77,6 +70,15 @@ SQLALCHEMY_DATABASE_URI = 'postgresql://superset:superset@127.0.0.1/superset'
 $ echo "export PYTHONPATH=$HOME/conf" >> ~/.bashrc
 $ . ~/.bashrc
 ```
+
+## Initialize Superset
+
+```
+PYTHONPATH=/home/ubuntu/superset-conf superset db upgrade
+superset init
+```
+
+## Run Superset as a background service
 
 Create startup scripts
 ```
