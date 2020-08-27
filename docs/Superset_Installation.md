@@ -6,24 +6,18 @@
 ```
 sudo apt update
 sudo apt install -y build-essential autoconf libtool python3-dev libssl-dev libsasl2-dev libldap2-dev 
-sudo apt install -y virtualenv
-virtualenv -p python3 superset
-source superset/bin/activate
-pip3 install image cryptography apache-superset
-```
-
-## superset User (in Ubuntu) Creation
-
-Create a user and group for superset and a home directory
-```
-sudo groupadd superset
-sudo useradd superset -g superset -d /var/lib/superset -m
+sudo apt install python3-pip
+sudo pip3 install image cryptography apache-superset psycopg2-binary
 ```
 
 ## Superset Login Account Creation
 
 Create a login account for Superset (don't forget to note the credentials somewhere)
 ```
+sudo apt install -y virtualenv
+virtualenv -p python3 superset
+source superset/bin/activate
+
 export FLASK_APP=superset
 flask fab create-admin
 ```
@@ -31,7 +25,7 @@ flask fab create-admin
 ## Initialize Superset
 
 ```
-superset db upgrade
+PYTHONPATH=/home/ubuntu/conf superset db upgrade
 superset init
 ```
 
@@ -68,22 +62,18 @@ sudo service postgresql restart
 
 ## Create a superset config
 
-Create a superset config. Don't forget to change ID, PW and DATABASE according to your Postgres credentials
 ```
-$ sudo su - superset
-$ cd /var/lib/superset
-$ mkdir conf
-$ vi conf/envs
-```
-PYTHONPATH=/var/lib/superset/conf
+PYTHONPATH=/home/ubuntu/superset-conf/
 ```
 
-$ vi conf/superset_config
 ```
+$ vi /home/ubuntu/superset-conf/superset_config.py
+
 SUPERSET_WEBSERVER_PORT = 8088
-SQLALCHEMY_DATABASE_URI = 'postgresql://ID:PW@127.0.0.1/DATABASE'
+SQLALCHEMY_DATABASE_URI = 'postgresql://superset:superset@127.0.0.1/superset'
 ```
 
+```
 $ echo "export PYTHONPATH=$HOME/conf" >> ~/.bashrc
 $ . ~/.bashrc
 ```
@@ -92,19 +82,14 @@ Create startup scripts
 ```
 $ sudo vi /etc/systemd/system/superset-server.service
 ```
+
+```
 [Unit]
-Description=Superset server
-After=network.target postgresql.service
-Wants=postgresql.service
+Description=Visualization platform by Airbnb
 
 [Service]
-EnvironmentFile=/var/lib/superset/conf/envs
-User=superset
-Group=superset
 Type=simple
-ExecStart=/usr/local/bin/superset runserver
-Restart=on-failure
-RestartSec=10s
+ExecStart=/home/ubuntu/superset/bin/superset run -h 0.0.0.0 -p 8088 --with-threads --reload
 
 [Install]
 WantedBy=multi-user.target
@@ -115,22 +100,6 @@ Run the server
 $ sudo systemctl daemon-reload
 $ sudo systemctl start superset-server
 $ sudo systemctl status superset-server
-
-● superset-server.service - Superset server
-   Loaded: loaded (/etc/systemd/system/superset-server.service; disabled; vendor preset: enabled)
-   Active: active (running) since Tue 2018-07-24 05:05:02 UTC; 2min 21s ago
- Main PID: 26409 (/usr/bin/python)
-    Tasks: 11
-   Memory: 390.4M
-      CPU: 8.046s
-   CGroup: /system.slice/superset-server.service
-           ├─26409 /usr/bin/python /usr/local/bin/superset runserver
-           ├─26423 /bin/sh -c gunicorn -w 2 --timeout 60 -b  0.0.0.0:8088 --limit-request-line 0 --limit-request-field_size 0 superset:app
-           ├─26424 gunicorn: master [superset:app]
-           ├─26428 gunicorn: worker [superset:app]
-           └─26430 gunicorn: worker [superset:app]
-
-Jul 24 05:05:05 ip-172-30-1-240 superset[26409]: [2018-07-24 05:05:05 +0000] [26424] [INFO] Listening at: http://0.0.0.0:8088 (26424)
 ...
 ```
 
