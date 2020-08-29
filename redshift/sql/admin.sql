@@ -15,3 +15,10 @@ GRANT ALL ON ALL TABLES IN SCHEMA adhoc TO GROUP analytics_users;
 CREATE USER keeyong PASSWORD '...';
 ALTER GROUP analytics_users ADD USER keeyong;
 
+-----
+SELECT 'DROP TABLE IF EXISTS ' || schemaname || '.' || tablename || ' CASCADE;' FROM pg_tables WHERE tableowner not in ('rdsdb', 'admin')
+SELECT 'DROP USER ' || usename || ';' FROM pg_user WHERE usename not in ('rdsdb', 'admin');
+SELECT 'DROP SCHEMA ' || s.nspname || ' CASCADE;'
+FROM pg_catalog.pg_namespace s
+JOIN pg_catalog.pg_user u ON u.usesysid = s.nspowner
+WHERE u.usename NOT IN ('admin', 'rdsdb');
